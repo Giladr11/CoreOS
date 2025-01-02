@@ -1,4 +1,4 @@
-# 💠 **CoreOS**
+# 🌀 **CoreOS**
 
 ![CoreOS Screen:](/docs/CoreOS_shell.png)
 
