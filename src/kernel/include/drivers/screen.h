@@ -1,5 +1,5 @@
-#ifndef CLI_H
-#define CLI_H
+#ifndef SCREEN_H
+#define SCREEN_H
 
 #include "include/stdint.h"
 

@@ -1,8 +1,12 @@
 #include "include/drivers/keyboard.h"
 #include "include/drivers/screen.h"
+#include "/mnt/usb/CoreOS/src/kernel/include/cli/cli.h"
 
 int g_CapsActive = 0;
 int g_shiftActive = 0;
+
+char input_buffer[INPUT_BUFFER_SIZE];
+int input_index = 0;
 
 typedef struct {
     int scancode;
@@ -87,26 +91,46 @@ void processKey(int scancode)
     }
 
     switch (key)
-    {
-        case '\t':
-            putc('\t');
-            break;
-        
+    {   
         case '\b':
-            putc('\b');
+            if (input_index > 0)
+            {
+                input_index--;
+                input_buffer[input_index] = '\0';
+                putc('\b');
+            }
             break;
         
         case '\n':
+            input_buffer[input_index] = '\0';
+            input_index = 0;
+
+            CliHandleInput(input_buffer);
+
             putc('\n');
+
             break;
 
         case ' ':
-            putc(' ');
+            if (input_index < INPUT_BUFFER_SIZE - 1)
+            {
+                input_buffer[input_index++] = ' ';
+                input_buffer[input_index] = '\0';
+                putc(' ');
+            }
             break;
+
+        // case '\t':
+        //     putc('\t');
+        //     break;
 
         default:
-            printf("%c", key);
+            if (input_index < INPUT_BUFFER_SIZE - 1)
+            {
+                input_buffer[input_index++] = key;
+                input_buffer[input_index] = '\0';
+            }
+            putc(key);
             break;
     }
-
 }

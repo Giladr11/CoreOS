@@ -7,14 +7,7 @@ STAGE2_DIR = stage2
 KERNEL_DIR = kernel
 INCLUDE_DIR = include
 CRC-32_DIR = crc-32
-MEMORY_DIR = memory
-SYSCALLS_DIR = syscalls
-SCHEDULER_DIR = scheduler
-FS_DIR = fs
-CONSOLE_DIR = console
 INIT_DIR = init
-X86_DIR = arch/x86
-DRIVERS_DIR = drivers
 
 # Compilers:
 ## Boot
