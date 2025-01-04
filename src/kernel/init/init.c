@@ -43,8 +43,8 @@ void VGA_Kernel_Entry()
 void kernel_main() {
     HAL_Initialize();
 
-    IRQ_RegistersHandler(0, timer);
-    IRQ_RegistersHandler(1, processKey);
+    IRQ_RegistersHandler(0, timer);         
+    IRQ_RegistersHandler(1, processKey);  
 
     VGA_Kernel_Entry();
 }

@@ -61,7 +61,7 @@ char GeneralKey(int scancode)
 
 void processKey()
 {
-    uint8_t scancode = inb(0x60);
+    uint8_t scancode = inb(0x60); // I/O communication with the keyboard controller
 
     if (scancode == 0x2A || scancode == 0x36)
     {
