@@ -3,19 +3,20 @@
 
 int strcmp(const char* str1, const char* str2)
 {
-    while (*str1 && (*str1 == *str2)) {
+    while (*str1 && (*str1 == *str2)) 
+    {
         str1++;
         str2++;
     }
 
-    // Return the difference between the first differing characters (or 0 if equal)
     return (unsigned char)(*str1) - (unsigned char)(*str2);
 }
 
 void handle_help()
 {
     Enter_In_Cli();
-    printf("\nThe Available Commands Are:");
+    Modify_VGA_Attr(0x0E); // yellow
+    printf("\nThe Available Commands:");
     printf("\n------------------------------");
     printf("\nclear - clears the screen");
     Disable_Enter_In_Cli();
