@@ -1,6 +1,6 @@
 #include "include/arch/x86/hal/hal.h"
 #include "include/drivers/screen.h"
-#include "include/arch/x86/pic/irq.h"
+#include "include/drivers/keyboard.h"
 
 void timer(Registers* regs)
 {
@@ -37,12 +37,14 @@ void VGA_Kernel_Entry()
     Enable_Prefix_Line();
     printf("\n");
     Modify_VGA_Attr(0x0F);
+    Allow_Typing();
 }
 
 void kernel_main() {
     HAL_Initialize();
 
     IRQ_RegistersHandler(0, timer);
+    IRQ_RegistersHandler(1, processKey);
 
     VGA_Kernel_Entry();
 }

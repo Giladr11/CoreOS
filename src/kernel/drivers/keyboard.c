@@ -1,6 +1,7 @@
 #include "include/drivers/keyboard.h"
 #include "include/drivers/screen.h"
-#include "/mnt/usb/CoreOS/src/kernel/include/cli/cli.h"
+#include "include/cli/cli.h"
+#include "include/arch/x86/cpu/io.h"
 
 int g_CapsActive = 0;
 int g_shiftActive = 0;
@@ -58,8 +59,10 @@ char GeneralKey(int scancode)
     return key;
 }
 
-void processKey(int scancode)
+void processKey()
 {
+    uint8_t scancode = inb(0x60);
+
     if (scancode == 0x2A || scancode == 0x36)
     {
         g_shiftActive = 1;

@@ -8,6 +8,13 @@
 
 IRQHandler g_IRQHandlers[16];
 
+int g_allow_typing = 0;
+
+void Allow_Typing()
+{
+    g_allow_typing = 1;
+}
+
 void IRQ_Handler(Registers* regs)
 {
     int irq = regs->interrupt - PIC_REMAP_OFFSET;
@@ -18,15 +25,6 @@ void IRQ_Handler(Registers* regs)
     if (g_IRQHandlers[irq] != NULL)
     {
         g_IRQHandlers[irq](regs);
-    }
-
-    else if (irq == 1)
-    {
-        uint8_t scancode = inb(0x60);
-
-        processKey(scancode);
-
-        PIC_SendEndOfInterrupt(irq);
     }
 
     else

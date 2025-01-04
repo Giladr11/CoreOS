@@ -5,6 +5,8 @@
 
 typedef void (*IRQHandler)(Registers* regs);
 
+void Allow_Typing();
+
 void IRQ_Initialize();
 
 void IRQ_RegistersHandler(int irq, IRQHandler handler);
