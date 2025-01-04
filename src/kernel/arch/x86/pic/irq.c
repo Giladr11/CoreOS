@@ -8,13 +8,6 @@
 
 IRQHandler g_IRQHandlers[16];
 
-int g_allow_typing = 0;
-
-void Allow_Typing()
-{
-    g_allow_typing = 1;
-}
-
 void IRQ_Handler(Registers* regs)
 {
     int irq = regs->interrupt - PIC_REMAP_OFFSET;
