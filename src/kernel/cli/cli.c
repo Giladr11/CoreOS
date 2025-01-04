@@ -15,7 +15,7 @@ int strcmp(const char* str1, const char* str2)
 void handle_help()
 {
     Enter_In_Cli();
-    printf("\nThe Active Commands Are:");
+    printf("\nThe Available Commands Are:");
     printf("\n------------------------------");
     printf("\nclear - clears the screen");
     Disable_Enter_In_Cli();
