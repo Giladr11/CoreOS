@@ -17,7 +17,7 @@ void handle_help()
     Enter_In_Cli();
     printf("\nThe Active Commands Are:");
     printf("\n------------------------------");
-    printf("\n    clear - clears the screen");
+    printf("\nclear - clears the screen");
     Disable_Enter_In_Cli();
 }
 
