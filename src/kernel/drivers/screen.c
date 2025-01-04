@@ -13,6 +13,8 @@ char* vga_buffer = (char*)VGA_ADDRESS;
 int cursor_position = 0;
 int input_start = 0;
 
+int enter_in_cli = 0;
+
 void Modify_VGA_Attr(int attr)
 {
     vga_attr = attr;
@@ -38,6 +40,16 @@ void move_cursor()
     outb(0x3D5, (unsigned char)((position >> 8) & 0xFF));
 }
 
+void Enter_In_Cli()
+{
+    enter_in_cli = 1;
+}
+
+void Disable_Enter_In_Cli()
+{
+    enter_in_cli = 0;
+}
+
 void print_prefix_line()
 {
     uint8_t original_attr = vga_attr;
@@ -53,6 +65,17 @@ void print_prefix_line()
     printf("$ ");
 
     input_start = cursor_position;
+}
+
+// Set every position in the VGA buffer to a space character with the current attribute
+void clear_screen() {
+    for (int i = 0; i < VGA_ROWS * VGA_COLS; i++) {
+        vga_buffer[i * 2] = ' '; 
+        vga_buffer[i * 2 + 1] = vga_attr;
+    }
+
+    cursor_position = 0;
+    move_cursor();
 }
 
 void putc(char c)
@@ -79,7 +102,7 @@ void putc(char c)
     if (c == '\n') 
     {
         cursor_position += VGA_COLS - (cursor_position % VGA_COLS); // Move to next line
-        if (prefix_line == 1)
+        if (prefix_line == 1 && enter_in_cli == 0)
         {
             print_prefix_line();
         }

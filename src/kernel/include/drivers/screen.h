@@ -11,6 +11,12 @@ void Modify_VGA_Attr(int attr);
 
 void move_cursor();
 
+void Enter_In_Cli();
+
+void Disable_Enter_In_Cli();
+
+void clear_screen();
+
 void putc(char c);
 
 void puts(const char *str);

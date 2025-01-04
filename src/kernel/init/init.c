@@ -34,6 +34,9 @@ void VGA_Kernel_Entry()
     printf("   \\\\|||||__________||||______________|||______________||||__________|||||//   \n");
     printf("\n");
     
+    Modify_VGA_Attr(0x05);
+    printf("Type 'help' To See The Available Commands\n");
+
     Enable_Prefix_Line();
     printf("\n");
     Modify_VGA_Attr(0x0F);
