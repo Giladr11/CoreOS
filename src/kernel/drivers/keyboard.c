@@ -3,6 +3,8 @@
 #include "include/cli/cli.h"
 #include "include/arch/x86/cpu/io.h"
 
+#define KEYBOARD_TABLE_SIZE 48
+
 int g_CapsActive = 0;
 int g_shiftActive = 0;
 
@@ -16,7 +18,7 @@ typedef struct {
     char shiftSymbol;
 } Keyboard;
 
-Keyboard g_Keyboard[48] = {
+Keyboard keyboard_table[KEYBOARD_TABLE_SIZE] = {
     {0x02, '1', '1', '!'}, {0x03, '2', '2', '@'}, {0x04, '3', '3', '#'}, {0x05, '4', '4', '$'},
     {0x06, '5', '5', '%'}, {0x07, '6', '6', '^'}, {0x08, '7', '7', '&'}, {0x09, '8', '8', '*'},
     {0x0A, '9', '9', '('}, {0x0B, '0', '0', ')'}, {0x0C, '-', '-', '_'}, {0x0D, '=', '=', '+'},
@@ -35,23 +37,23 @@ Keyboard g_Keyboard[48] = {
 char GeneralKey(int scancode)
 {
     char key = '\0';
-    for (int i = 0; i < 48; i++)
+    for (int i = 0; i < KEYBOARD_TABLE_SIZE; i++)
     {
-        if (g_Keyboard[i].scancode == scancode)
+        if (keyboard_table[i].scancode == scancode)
         {   
             if (g_shiftActive == 1)
             {
-                key = g_Keyboard[i].shiftSymbol;
+                key = keyboard_table[i].shiftSymbol;
             }
 
             else if (g_CapsActive == 1)
             {
-                key = g_Keyboard[i].upperCase;
+                key = keyboard_table[i].upperCase;
             }
 
             else
             {
-                key = g_Keyboard[i].lowerCase; 
+                key = keyboard_table[i].lowerCase; 
             }
             break;
         }
@@ -108,7 +110,7 @@ void processKey()
             input_buffer[input_index] = '\0';
             input_index = 0;
 
-            CliHandleInput(input_buffer);
+            CliHandleInput();
 
             putc('\n');
 

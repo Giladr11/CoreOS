@@ -1,6 +1,7 @@
 #include "include/arch/x86/hal/hal.h"
 #include "include/drivers/screen.h"
 #include "include/drivers/keyboard.h"
+#include "include/heap/heap.h"
 
 void timer(Registers* regs)
 {
@@ -36,10 +37,6 @@ void VGA_Kernel_Entry()
     
     Modify_VGA_Attr(0x05);
     printf("Type 'help' To See The Available Commands\n");
-
-    Enable_Prefix_Line();
-    printf("\n");
-    Modify_VGA_Attr(0x0F);
 }
 
 void kernel_main() {
@@ -49,7 +46,16 @@ void kernel_main() {
     IRQ_RegistersHandler(1, processKey);     
 
     VGA_Kernel_Entry();
+
+    heap_init();
+
+    Enter_In_Cli();
+    Modify_VGA_Attr(0x03);
+    printf("\nThe Heap Has Been Initialized -> Start: %p, Size: %d Bytes\n", blocks_list, blocks_list->size);
+    Disable_Enter_In_Cli();
+
+    Enable_Prefix_Line();
+    printf("\n");
+    Modify_VGA_Attr(0x0F);
 }
    
-
-    

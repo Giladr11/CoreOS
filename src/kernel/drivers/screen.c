@@ -73,9 +73,13 @@ void clear_screen() {
         vga_buffer[i * 2] = ' '; 
         vga_buffer[i * 2 + 1] = vga_attr;
     }
-
     cursor_position = 0;
     move_cursor();
+
+    Enter_In_Cli();
+    Modify_VGA_Attr(0x05);
+    printf("Type 'help' To See The Available Commands\n");
+    Disable_Enter_In_Cli();
 }
 
 void putc(char c)
@@ -224,6 +228,13 @@ void printf(const char* fmt, ...)
                     break;
 
                 case 'x':
+                    printh(*arg_ptr);
+                    arg_ptr++;
+                    break;
+
+                case 'p':
+                    putc('0');
+                    putc('x');
                     printh(*arg_ptr);
                     arg_ptr++;
                     break;

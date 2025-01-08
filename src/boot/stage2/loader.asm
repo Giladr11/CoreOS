@@ -7,9 +7,9 @@ section .data
     PHYSICAL_KERNEL_ADDR equ 0x10000
     KERNEL_START_ADDR    equ 0x100000
     KERNEL_START_SECTOR  equ 0x06
-    KERNEL_SECTORS       equ 33
+    KERNEL_SECTORS       equ 39
     KERNEL_OFFSET        equ 0x00
-    KERNEL_SIZE          equ 16876
+    KERNEL_SIZE          equ 19536
 
     KernelPacket:       times 16 db 0
 
