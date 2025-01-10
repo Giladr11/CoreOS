@@ -29,11 +29,11 @@ void handle_help()
     Enter_In_Cli();
     Modify_VGA_Attr(0x0E); // yellow
     printf("\nThe Available Commands:");
-    printf("\n---------------------------");
+    printf("\n-----------------------");
     printf("\nclear     - Clears the screen");
     printf("\nheap_dump - Displays the current Heap");
     printf("\nalloc     - Allocates memory to the Heap");
-    printf("\nfree      -  Free memory from the Heap");
+    printf("\nfree      - Free memory from the Heap");
     Disable_Enter_In_Cli();
 }
 

@@ -30,6 +30,9 @@ The kernel manages hardware and system resources, providing essential OS service
   - Handles memory allocation and deallocation dynamically.
   - Resolves memory fragmentation to ensure efficient utilization.
 
+![Allocation Screen:](/docs/alloc.png)
+![Heap Dump and Free Screen:](/docs/heap_dump&free.png)
+
 - **`FAT16 File System Support`**:
   - Provides file system functionality for managing files and directories.
 

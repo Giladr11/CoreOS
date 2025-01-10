@@ -26,11 +26,11 @@ void heap_dump()
     int pos = 0;
     while (current != NULL)
     {
-        printf("\nMetadata Addr: %p, User Memory Address: %p, Size: %d, Free: %d\n"
+        printf("\nMetadata Addr: %p, User Memory Addr: %p, Size: %d, Free: %d\n"
                 , current
                 , (void*)((uintptr_t)current + sizeof(Block))
                 , current->size, current->free);
-                
+
         pos++;
         current = current->next;
     }

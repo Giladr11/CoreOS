@@ -1,7 +1,3 @@
 .vscode
 .gdb_history
-<<<<<<< HEAD
 build
-=======
-# build
->>>>>>> be929e5 (first commit adding heap/cli/bootloader/isr/idt/pic/drivers)
