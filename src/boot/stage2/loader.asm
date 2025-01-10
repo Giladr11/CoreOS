@@ -9,7 +9,11 @@ section .data
     KERNEL_START_SECTOR  equ 0x06
     KERNEL_SECTORS       equ 39
     KERNEL_OFFSET        equ 0x00
+<<<<<<< HEAD
     KERNEL_SIZE          equ 19536
+=======
+    KERNEL_SIZE          equ 19632
+>>>>>>> be929e5 (first commit adding heap/cli/bootloader/isr/idt/pic/drivers)
 
     KernelPacket:       times 16 db 0
 

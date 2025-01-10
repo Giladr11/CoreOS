@@ -1,6 +1,10 @@
 ;Pre-Boot CRC-32 Calculation
 section .data
+<<<<<<< HEAD
     KERNEL_SIZE equ 19536
+=======
+    KERNEL_SIZE equ 19632
+>>>>>>> be929e5 (first commit adding heap/cli/bootloader/isr/idt/pic/drivers)
     STDOUT_RESULT_SIZE equ 0x0A    
 
     kernel_filename db  "build/kernel/kernel.bin", 0

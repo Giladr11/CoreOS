@@ -21,10 +21,16 @@ void heap_dump()
 
     Modify_VGA_Attr(0x06);
     printf("\n\nThe Current Heap:\n");
+    printf("----------------------\n");
+
     int pos = 0;
     while (current != NULL)
     {
-        printf("\n  Block at %p, Size: %d, Free: %d\n", current, current->size, current->free);
+        printf("\nMetadata Addr: %p, User Memory Address: %p, Size: %d, Free: %d\n"
+                , current
+                , (void*)((uintptr_t)current + sizeof(Block))
+                , current->size, current->free);
+                
         pos++;
         current = current->next;
     }

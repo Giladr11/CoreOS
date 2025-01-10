@@ -32,6 +32,8 @@ void __attribute__((cdecl)) ISR_Handler(Registers* regs)
     }
 
     else {
+        Enter_In_Cli();
+
         printf("Unhandled exception %d %s\n", regs->interrupt, g_Exceptions[regs->interrupt]);
         
         printf("  eax=%x  ebx=%x  ecx=%x  edx=%x  esi=%x  edi=%x\n",
