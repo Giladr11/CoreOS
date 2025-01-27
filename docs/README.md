@@ -6,7 +6,7 @@
 
 ## 📖 **Overview**
 
-CoreOS is a custom **32-bit operating system** designed from scratch to showcase fundamental operating system concepts. It is built with **Assembly**, **C** and demonstrates low-level hardware interaction, memory management, and interrupt handling. CoreOS features a multi-stage bootloader, a robust kernel, and an efficient heap manager, along with support for a FAT16 file system and hardware drivers.
+CoreOS is a custom **32-bit operating system** designed from scratch to showcase fundamental operating system concepts. It is built with **Assembly**, **C** and demonstrates low-level hardware interaction, memory management, and interrupt handling. CoreOS features a multi-stage bootloader, a robust kernel, and an efficient heap manager and hardware drivers.
 
 ---
 
@@ -32,9 +32,6 @@ The kernel manages hardware and system resources, providing essential OS service
 
 ![Allocation Screen:](/docs/alloc.png)
 ![Heap Dump and Free Screen:](/docs/heap_dump&free.png)
-
-- **`FAT16 File System Support`**:
-  - Provides file system functionality for managing files and directories.
 
 - **`Interrupt Handling`**:
   - Set up the **IDT** that defines the address of the **ISR**s.
@@ -98,7 +95,6 @@ The project follows a structured folder architecture for better organization:
     |       |
     │       ├── cli/
     │       ├── drivers/
-    │       ├── fat16/
     │       ├── heap/
     │       ├── include/
     │       ├── init/
@@ -132,8 +128,6 @@ Contains the final OS binary (`disk.img`) and compiled bootloader/kernel files.
 - **`drivers/`**: Drivers for hardware components, including:
   - **Screen**: Implements VGA text mode for screen output.
   - **Keyboard**: Handles keyboard input and key mappings.
-  - **Disk**: Manages disk I/O operations.
-- **`fat16/`**: FAT16 file system implementation.
 - **`heap/`**: Heap memory manager for dynamic allocation and deallocation.
 - **`include/`**: Kernel header files.
 - **`init/`**: System initialization code.
