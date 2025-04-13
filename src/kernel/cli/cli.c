@@ -33,7 +33,7 @@ void handle_help()
     printf("\nclear     - Clears the screen");
     printf("\nheap_dump - Displays the current Heap");
     printf("\nalloc     - Allocates memory to the Heap");
-    printf("\nfree      - Free memory from the Heap");
+    printf("\nfree      - Frees up memory from the Heap");
     Disable_Enter_In_Cli();
 }
 
@@ -157,15 +157,15 @@ void handle_unknown(char input_buffer[INPUT_BUFFER_SIZE])
 typedef struct {
     const char* command;
     CommandHandler handler;
-} Command;
+} Commands;
 
-Command commands_table[] = 
+Commands commands_table[] = 
 {
-    {CLEAR_CMD   , handle_clear            },
-    {HELP_CMD    , handle_help             },
-    {"heap_dump" , handle_display_heap     },
-    {"alloc"     , handle_alloc_input      },
-    {"free"      , handle_dealocation_input}
+    {CLEAR_CMD     , handle_clear            },
+    {HELP_CMD      , handle_help             },
+    {HEAP_DUMP_CMD , handle_display_heap     },
+    {ALLOC_CMD     , handle_alloc_input      },
+    {FREE_CMD      , handle_dealocation_input}
 };
 
 void CliHandleInput()
