@@ -2,6 +2,7 @@
 #include "include/drivers/screen.h"
 #include "include/drivers/keyboard.h"
 #include "include/heap/heap.h"
+#include "include/syscalls/syscalls.h"
 
 void timer(Registers* regs)
 {
@@ -46,6 +47,8 @@ void kernel_main() {
     IRQ_RegistersHandler(1, processKey);     
 
     VGA_Kernel_Entry();
+    
+    init_syscalls_table();
 
     heap_init();
 

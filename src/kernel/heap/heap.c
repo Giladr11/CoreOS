@@ -19,7 +19,7 @@ void heap_dump()
 {
     Block *current = blocks_list;
 
-    Modify_VGA_Attr(0x06);
+    Modify_VGA_Attr(0x06); // brown color
     printf("\n\nThe Current Heap:\n");
     printf("----------------------\n");
 
@@ -58,7 +58,7 @@ void *malloc(uint32_t size)
 {
     DisableInterrupts();
 
-    Modify_VGA_Attr(0x06);
+    Modify_VGA_Attr(0x06); // brown color
 
     if (size == 0)
     {
@@ -115,7 +115,7 @@ void free(void *ptr)
 {
     DisableInterrupts();
 
-    Modify_VGA_Attr(0x06);
+    Modify_VGA_Attr(0x06); // brown color
 
     if (ptr == NULL)
     {   
@@ -144,7 +144,7 @@ void free(void *ptr)
 
     if (!block_found)
     {
-        Modify_VGA_Attr(0x04); // Set error attribute
+        Modify_VGA_Attr(0x04); // Set error attribute (red color)
         printf("\nError: Pointer %p is not a valid allocated block.\n", ptr);
         EnableInterrupts();
         return;
@@ -164,7 +164,7 @@ void free(void *ptr)
         current = current->next;
     }
 
-    Modify_VGA_Attr(0x02); // Set success attribute
+    Modify_VGA_Attr(0x02); // Set success attribute (green color)
     printf("\nSuccessfully Freed %p\n", ptr);
     EnableInterrupts();
 }

@@ -2,6 +2,7 @@
 #include "include/arch/x86/idt/idt.h"
 #include "include/arch/x86/cpu/io.h"
 #include "include/drivers/screen.h"
+#include "include/syscalls/syscalls.h"
 
 ISRHandler g_ISRHandlers[256];
 
@@ -24,17 +25,35 @@ void __attribute__((cdecl)) ISR_Handler(Registers* regs)
     //syscalls depends on eax
     else if (regs->interrupt == 128)
     {
-         printf("0x80 is a Syscalls Interrupt\n");
+         uint32_t status = syscalls_handler(regs);
+
+         if (status == 1)
+         {
+            Modify_VGA_Attr(0x02); // green color
+
+            printf("\nSyscall %d was succesfully executed!", regs->eax);
+         }
+         else {
+            Modify_VGA_Attr(0x04); // red color
+
+            printf("\nError: Syscall %d has failed!", regs->eax);
+         }
+         Modify_VGA_Attr(0x0F); // white color
     }
 
     else if (regs->interrupt >= 32){
-        printf("Unhandled Interrupt %d!\n", regs->interrupt);
+        Modify_VGA_Attr(0x04); // red color
+
+        printf("\nError: Unhandled Interrupt %d!\n", regs->interrupt);
+
+        Modify_VGA_Attr(0x0F); // white color
     }
 
     else {
         Enter_In_Cli();
+        Modify_VGA_Attr(0x04); // red color
 
-        printf("Unhandled exception %d %s\n", regs->interrupt, g_Exceptions[regs->interrupt]);
+        printf("\nError: Unhandled exception %d %s\n", regs->interrupt, g_Exceptions[regs->interrupt]);
         
         printf("  eax=%x  ebx=%x  ecx=%x  edx=%x  esi=%x  edi=%x\n",
                regs->eax, regs->ebx, regs->ecx, regs->edx, regs->esi, regs->edi);
@@ -45,6 +64,9 @@ void __attribute__((cdecl)) ISR_Handler(Registers* regs)
         printf("  interrupt=%x  errorcode=%x\n", regs->interrupt, regs->error);
 
         printf("KERNEL PANIC!\n");
+
+        Modify_VGA_Attr(0x0F); // white color
+
         KERNEL_PANIC();
     }
 }

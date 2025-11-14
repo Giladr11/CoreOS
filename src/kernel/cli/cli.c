@@ -30,10 +30,12 @@ void handle_help()
     Modify_VGA_Attr(0x0E); // yellow
     printf("\nThe Available Commands:");
     printf("\n-----------------------");
-    printf("\nclear     - Clears the screen");
-    printf("\nheap_dump - Displays the current Heap");
-    printf("\nalloc     - Allocates memory to the Heap");
-    printf("\nfree      - Frees up memory from the Heap");
+    printf("\nclear       - Clears the screen");
+    printf("\nheap_dump   - Displays the current Heap");
+    printf("\nalloc       - Allocates memory to the Heap");
+    printf("\nfree        - Frees up memory from the Heap");
+    printf("\nbeep        - Executes A syscall to make the PC speaker beep");
+    printf("\nplay_melody - Executes A syscall to play a melody");
     Disable_Enter_In_Cli();
 }
 
@@ -146,6 +148,24 @@ void handle_dealocation()
     Disable_Enter_In_Cli();
 }
 
+void handle_beep_syscall()
+{
+    Enter_In_Cli();
+
+    beep_syscall();
+
+    Disable_Enter_In_Cli();
+}
+
+void handle_play_melody_syscall()
+{
+    Enter_In_Cli();
+
+    play_melody_syscall();
+
+    Disable_Enter_In_Cli();
+}
+
 // Handle Unknown Commands
 void handle_unknown(char input_buffer[INPUT_BUFFER_SIZE])
 {
@@ -161,11 +181,13 @@ typedef struct {
 
 Commands commands_table[] = 
 {
-    {CLEAR_CMD     , handle_clear            },
-    {HELP_CMD      , handle_help             },
-    {HEAP_DUMP_CMD , handle_display_heap     },
-    {ALLOC_CMD     , handle_alloc_input      },
-    {FREE_CMD      , handle_dealocation_input}
+    {CLEAR_CMD     , handle_clear              },
+    {HELP_CMD      , handle_help               },
+    {HEAP_DUMP_CMD , handle_display_heap       },
+    {ALLOC_CMD     , handle_alloc_input        },
+    {FREE_CMD      , handle_dealocation_input  },
+    {BEEP_CMD      , handle_beep_syscall       },
+    {PLAY_MELODY   , handle_play_melody_syscall}
 };
 
 void CliHandleInput()

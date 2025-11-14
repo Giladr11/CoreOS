@@ -3,18 +3,24 @@
 
 #define INPUT_BUFFER_SIZE 256
 
-#define COMMANDS_TABLE_SIZE 5
+#define COMMANDS_TABLE_SIZE 7
 
-#define CLEAR_CMD     "clear"
-#define HELP_CMD      "help"
-#define HEAP_DUMP_CMD "heap_dump"
-#define ALLOC_CMD     "alloc"
-#define FREE_CMD      "free"
+#define CLEAR_CMD        "clear"
+#define HELP_CMD         "help"
+#define HEAP_DUMP_CMD    "heap_dump"
+#define ALLOC_CMD        "alloc"
+#define FREE_CMD         "free"
+#define BEEP_CMD         "beep"
+#define PLAY_MELODY      "play_melody"
 
 typedef void (*CommandHandler)(void);
 
 extern char input_buffer[INPUT_BUFFER_SIZE];
 extern int input_index;
+
+// SYSCALLS
+void __attribute__((cdecl)) beep_syscall();
+void __attribute__((cdecl)) play_melody_syscall();
 
 void CliHandleInput();
 
