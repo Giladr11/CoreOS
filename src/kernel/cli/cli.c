@@ -1,7 +1,6 @@
+#include "include/stdint.h"
 #include "include/cli/cli.h"
 #include "include/drivers/screen.h"
-#include "include/heap/heap.h"
-#include "include/stdint.h"
 
 int alloc_active = 0;
 int free_active =  0;
@@ -16,6 +15,24 @@ int strcmp(const char* str1, const char* str2)
 
     return (unsigned char)(*str1) - (unsigned char)(*str2);
 }
+
+void rtrim(char *str) {
+    if (!str) return;  // safety check
+
+    // Find the end of the string
+    char *end = str;
+    while (*end != '\0') {
+        end++;
+    }
+
+    // Move backwards and remove spaces
+    while (end > str && *(end - 1) == ' ') {
+        end--;
+    }
+
+    *end = '\0';
+}
+
 
 // Handle clear screen command
 void handle_clear()
@@ -40,68 +57,13 @@ void handle_help()
 }
 
 // Converts String to Integer
-int atoi(const char* str) {
-    int result = 0;
+uint32_t atoi(const char* str) {
+    uint32_t result = 0;
     while (*str >= '0' && *str <= '9') {
         result = result * 10 + (*str - '0');
         str++;
     }
     return result;
-}
-
-void handle_display_heap()
-{
-    Enter_In_Cli();
-
-    heap_dump();
-    
-    Disable_Enter_In_Cli();
-}
-
-// Handle Alloc Input
-void handle_alloc_input()
-{
-    Enter_In_Cli();
-
-    Modify_VGA_Attr(0x0B);
-    printf("\nEnter the Number of Bytes to Allocate:");
-    Modify_VGA_Attr(0x03);
-
-    alloc_active = 1;
-}
-
-// Handle Allocation
-void handle_allocation()
-{
-    int size;
-
-    size = atoi(input_buffer);
-
-    void* allocated_memory = malloc(size);
-
-    if (allocated_memory)
-    {   
-        Modify_VGA_Attr(0x02);
-        printf("\nSuccessfully Allocated %d Bytes at Address %p\n", size, allocated_memory);
-    }
-    else {
-        Modify_VGA_Attr(0x04);
-        printf("\nMemory Allocation Has Failed!\n");
-    }
-
-    Disable_Enter_In_Cli();
-}
-
-// Handle Deallocation Input
-void handle_dealocation_input()
-{
-    Enter_In_Cli();
-
-    Modify_VGA_Attr(0x0B);
-    printf("\nEnter the Address of the Block to Free:");
-    Modify_VGA_Attr(0x03);
-
-    free_active = 1;
 }
 
 uintptr_t hex_to_int(const char* hex_str) {
@@ -136,13 +98,69 @@ void* hex_to_pointer(const char* hex_str) {
     return (void*)hex_to_int(hex_str);
 }
 
+void handle_display_heap()
+{
+    Enter_In_Cli();
+
+    heap_dump_syscall();
+    
+    Disable_Enter_In_Cli();
+}
+
+// Handle Alloc Input
+void handle_alloc_input()
+{
+    Enter_In_Cli();
+
+    Modify_VGA_Attr(0x0B);
+    printf("\nEnter the Number of Bytes to Allocate:");
+    Modify_VGA_Attr(0x03);
+
+    alloc_active = 1;
+}
+
+// Handle Allocation
+void handle_allocation()
+{
+    uint32_t size;
+
+    size = atoi(input_buffer);
+
+    uint32_t id = heap_alloc_syscall(size);
+
+    if (id)
+    {   
+        Modify_VGA_Attr(0x02);
+        printf("\nSuccessfully Allocated %d Bytes with Id: %d\n", size, id);
+    }
+    else {
+        Modify_VGA_Attr(0x04);
+        printf("\nMemory Allocation Has Failed!\n");
+    }
+
+    Disable_Enter_In_Cli();
+}
+
+// Handle Deallocation Input
+void handle_dealocation_input()
+{
+    Enter_In_Cli();
+
+    Modify_VGA_Attr(0x0B);
+    printf("\nEnter the Address of the Block to Free:");
+    Modify_VGA_Attr(0x03);
+
+    free_active = 1;
+}
+
 // Handle Deallocation
 void handle_dealocation()
 {
+    // Instead -> check the memory block id received as input
     void* ptr = (void*)hex_to_pointer(input_buffer);
 
     if (ptr) {
-        free(ptr);
+        //free(ptr);
     } 
 
     Disable_Enter_In_Cli();
@@ -192,6 +210,8 @@ Commands commands_table[] =
 
 void CliHandleInput()
 {
+    rtrim(input_buffer);
+
     if (alloc_active == 1)
     {
         handle_allocation();

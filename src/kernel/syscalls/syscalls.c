@@ -1,5 +1,6 @@
 #include "include/syscalls/syscalls.h"
 #include "include/arch/x86/cpu/io.h"
+#include "include/heap/heap.h"
 #include "include/stdint.h"
 
 #define PIT_CHANNEL_2 0x42
@@ -27,29 +28,55 @@ struct Note melody[] = {
 
 #define MELODY_LENGTH (sizeof(melody)/sizeof(melody[0]))
 
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
 
 syscall_t syscall_table[256] = {0};
 
 void init_syscalls_table() 
 {
-    syscall_table[SYS_BEEP] = sys_beep;
+    syscall_table[SYS_HEAP_DUMP]   = sys_heap_dump;
+    syscall_table[SYS_HEAP_ALLOC]  = (syscall_t)sys_heap_alloc;
+    syscall_table[SYS_HEAP_FREE]   = sys_heap_free;
+    syscall_table[SYS_BEEP]        = sys_beep;
     syscall_table[SYS_PLAY_MELODY] = sys_play_melody;
     //...
 }
 
-uint32_t syscalls_handler(Registers* regs)
+SyscallResult syscalls_handler(Registers* regs)
 {
-    void* syscall_func_ptr = (void*)syscall_table[regs->eax]; // Assigning the syscall function to a pointer
+    SyscallResult result = {0xFFFFFFFF, 0};
 
-    if (syscall_func_ptr == NULL)
+    if (syscall_table[regs->eax] == NULL)
+        return result;
+
+    switch (regs->eax)
     {
-        return 0;
+        case SYS_HEAP_ALLOC:
+            result.value = ((uint32_t(*)(Registers*))syscall_table[regs->eax])(regs);
+            result.status = 1;
+
+            break;
+
+        default:
+            ((void(*)(Registers*))syscall_table[regs->eax])(regs);
+            result.status = 1;
+
+            break;
     }
 
-    ((void(*)())syscall_func_ptr)(regs); // Executing the syscall function
+    return result;
+}
 
-    return 1;
+void sys_heap_dump(Registers* regs) {
+    return;
+}
+
+uint32_t sys_heap_alloc(Registers* regs) {
+    return regs->ebx;
+}
+
+void sys_heap_free(Registers* regs) {
+    return;
 }
 
 void wait_ms(uint32_t ms) {
@@ -70,9 +97,9 @@ void sys_beep(Registers* regs) {
     outb(PIT_CHANNEL_2, divider >> 8);
 
     uint8_t tmp = inb(SPEAKER_PORT);
-    outb(SPEAKER_PORT, tmp | 0x03); // enable speaker
+    outb(SPEAKER_PORT, tmp | 0x03);  // enable speaker
 
-    wait_ms(ms); // <-- use wait_ms
+    wait_ms(ms);                     // <-- use wait_ms
 
     tmp = inb(SPEAKER_PORT);
     outb(SPEAKER_PORT, tmp & ~0x03); // disable speaker
@@ -83,15 +110,14 @@ void sys_play_melody(Registers* regs) {
 
     for (int i = 0; i < MELODY_LENGTH; i++) {
         if (melody[i].freq == 0) {
-            wait_ms(melody[i].ms);  // rest
+            wait_ms(melody[i].ms);      // rest
         } else {
             Registers fake;
             fake.ebx = melody[i].freq;
             fake.ecx = melody[i].ms;
             sys_beep(&fake);
 
-            // small gap (~12.5% of note duration)
-            wait_ms(melody[i].ms / 8);
+            wait_ms(melody[i].ms / 8); // small gap (~12.5% of note duration)
         }
     }
 }

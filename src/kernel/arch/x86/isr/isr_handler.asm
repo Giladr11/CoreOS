@@ -2,6 +2,7 @@
 
 extern ISR_Handler
 
+temp_eax_res resd 1
 ; cpu pushes to the stack: (ss, esp, eflags, cs, eip) to save the interrupted program context
 
 %macro ISR_NOERROR_CODE 1
@@ -43,6 +44,8 @@ isr_common:
     call ISR_Handler
 
     add esp, 4
+    
+    mov [temp_eax_res], eax        ; set isr handler response value to ebx
 
     pop eax             ; restore old segment
     mov ds, ax
@@ -51,6 +54,9 @@ isr_common:
     mov gs, ax
 
     popa                ; pop general purpose regs
-    add esp, 8        ; remove error code and interrupt number
+
+    mov eax, [temp_eax_res]        ; set isr handler response value from ebx back to eax so cdecl could read result
+
+    add esp, 8          ; remove error code and interrupt number
 
     iret                ; return from isr and pop: (ss, esp, eflags, cs, eip)

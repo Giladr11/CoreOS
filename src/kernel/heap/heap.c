@@ -54,7 +54,7 @@ void split_block(Block *block, uint32_t size)
 }
 
 // Function to Allocate Memory
-void *malloc(uint32_t size)
+void *kmalloc(uint32_t size)
 {
     DisableInterrupts();
 
@@ -111,7 +111,7 @@ void coalesce_free_blocks()
 }
 
 // Function to Deallocate Memory
-void free(void *ptr)
+void kfree(void *ptr)
 {
     DisableInterrupts();
 

@@ -16,32 +16,37 @@ void ISR_Initialize() {
     }
 }
 
-void __attribute__((cdecl)) ISR_Handler(Registers* regs) 
+uint32_t __attribute__((cdecl)) ISR_Handler(Registers* regs) 
 {
     if (g_ISRHandlers[regs->interrupt] != NULL) {
         g_ISRHandlers[regs->interrupt](regs);
     }
 
     //syscalls depends on eax
-    else if (regs->interrupt == 128)
+    else if (regs->interrupt == 0x80)
     {
-         uint32_t status = syscalls_handler(regs);
+         SyscallResult response = syscalls_handler(regs);
 
-         if (status == 1)
+         if (response.status == 1)
          {
             Modify_VGA_Attr(0x02); // green color
 
-            printf("\nSyscall %d was succesfully executed!", regs->eax);
+            printf("\nsyscall %d was succesfully executed!", regs->eax);
+
+            if (response.value != 0xFFFFFFFF){
+                 return response.value;
+            }
          }
          else {
             Modify_VGA_Attr(0x04); // red color
 
-            printf("\nError: Syscall %d has failed!", regs->eax);
+            printf("\nError: syscall %d has failed!", regs->eax);
          }
+         return 0;
          Modify_VGA_Attr(0x0F); // white color
     }
 
-    else if (regs->interrupt >= 32){
+    else if (regs->interrupt >= 0x20){
         Modify_VGA_Attr(0x04); // red color
 
         printf("\nError: Unhandled Interrupt %d!\n", regs->interrupt);
