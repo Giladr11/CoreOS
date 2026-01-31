@@ -13,6 +13,11 @@ typedef struct {
     
 } __attribute__((packed)) Registers;
 
+typedef union {
+    uint32_t u32;
+    void* ptr;
+} ISRResult;
+
 typedef void (*ISRHandler)(Registers* regs);
 
 static const char* const g_Exceptions[] = {

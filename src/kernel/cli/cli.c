@@ -1,5 +1,6 @@
 #include "include/stdint.h"
 #include "include/cli/cli.h"
+#include "include/heap/heap.h"
 #include "include/drivers/screen.h"
 
 int alloc_active = 0;
@@ -101,8 +102,21 @@ void* hex_to_pointer(const char* hex_str) {
 void handle_display_heap()
 {
     Enter_In_Cli();
+    Modify_VGA_Attr(0x06); // brown color
 
-    heap_dump_syscall();
+
+    Block* current =  heap_dump_syscall();
+
+    while (current != NULL)
+    {
+        printf("\nId: %d, Metadata Addr: %p, User Memory Addr: %p, Size: %d, Free: %d\n"
+                 , current->id
+                 , current
+                 , (void*)((uintptr_t)current + sizeof(Block))
+                 , current->size, current->free);
+
+        current = current->next;
+    }
     
     Disable_Enter_In_Cli();
 }
@@ -117,6 +131,8 @@ void handle_alloc_input()
     Modify_VGA_Attr(0x03);
 
     alloc_active = 1;
+
+    input_start = cursor_position;
 }
 
 // Handle Allocation
@@ -131,7 +147,7 @@ void handle_allocation()
     if (id)
     {   
         Modify_VGA_Attr(0x02);
-        printf("\nSuccessfully Allocated %d Bytes with Id: %d\n", size, id);
+        printf("\nSuccessfully Allocated %d Bytes into block Id: %d\n", size, id);
     }
     else {
         Modify_VGA_Attr(0x04);
@@ -147,10 +163,12 @@ void handle_dealocation_input()
     Enter_In_Cli();
 
     Modify_VGA_Attr(0x0B);
-    printf("\nEnter the Address of the Block to Free:");
+    printf("\nEnter the Id of the Block to Free:");
     Modify_VGA_Attr(0x03);
 
     free_active = 1;
+
+    input_start = cursor_position;
 }
 
 // Handle Deallocation

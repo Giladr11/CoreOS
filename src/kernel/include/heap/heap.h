@@ -7,6 +7,7 @@
 #define HEAP_START 0x1000000 // Starting Address of the Heap
 
 typedef struct Block{
+    uint32_t id;
     uint32_t size;
     struct Block *next;
     int free;
@@ -17,8 +18,8 @@ extern uint32_t heap_end;       // The end of the Heap
 extern Block *blocks_list;      // The Head of the Blocks list
 
 void heap_init();
-void heap_dump();
-void *malloc(uint32_t size);
-void free(void *ptr);
+void* heap_dump();
+void *kmalloc(uint32_t size);
+void kfree(void *ptr);
 
 #endif

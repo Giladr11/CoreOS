@@ -15,25 +15,27 @@ void heap_init()
     blocks_list->free = 1;                                  // Marks the entire Heap as free
 }
 
-void heap_dump()
+void* heap_dump()
 {
-    Block *current = blocks_list;
+    // enable only for admin
+    //Block *current = blocks_list;
 
-    Modify_VGA_Attr(0x06); // brown color
-    printf("\n\nThe Current Heap:\n");
-    printf("----------------------\n");
+    //Modify_VGA_Attr(0x06); // brown color
+    // printf("\n\nThe Current Heap:\n");
+    // printf("----------------------\n");
 
-    int pos = 0;
-    while (current != NULL)
-    {
-        printf("\nMetadata Addr: %p, User Memory Addr: %p, Size: %d, Free: %d\n"
-                , current
-                , (void*)((uintptr_t)current + sizeof(Block))
-                , current->size, current->free);
+    // while (current != NULL)
+    // {
+    //     printf("\nId: %d, Metadata Addr: %p, User Memory Addr: %p, Size: %d, Free: %d\n"
+    //             , current->id
+    //             , current
+    //             , (void*)((uintptr_t)current + sizeof(Block))
+    //             , current->size, current->free);
 
-        pos++;
-        current = current->next;
-    }
+    //     current = current->next;
+    // }
+
+    return blocks_list;
 }
 
 // Function to split a block into two smaller blocks according the the requested size
@@ -69,7 +71,9 @@ void *kmalloc(uint32_t size)
     Block *current = blocks_list;
     while (current != NULL) 
     {   
-        printf("\nChecking Block at %p with the size of %d Bytes\n", current, current->size);
+        // for admin privileges
+        printf("\nBlock id: %d at Address %p with the size of %d Bytes\n", current->id, current, current->size);
+
         if (current->free == 1 && current->size >= size + sizeof(Block))
         {
             if (current->size > size + sizeof(Block))
@@ -78,6 +82,7 @@ void *kmalloc(uint32_t size)
             }
 
             current->free = 0;                                   // Mark the block as allocated
+
             EnableInterrupts();
             return (void*)((uintptr_t)current + sizeof(Block));  // Return the allocated memory (skipping the Block header)
         }

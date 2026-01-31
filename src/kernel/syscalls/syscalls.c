@@ -31,10 +31,11 @@ struct Note melody[] = {
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 syscall_t syscall_table[256] = {0};
+uint32_t global_id = 0;
 
 void init_syscalls_table() 
 {
-    syscall_table[SYS_HEAP_DUMP]   = sys_heap_dump;
+    syscall_table[SYS_HEAP_DUMP]   = (void*)sys_heap_dump;
     syscall_table[SYS_HEAP_ALLOC]  = (syscall_t)sys_heap_alloc;
     syscall_table[SYS_HEAP_FREE]   = sys_heap_free;
     syscall_table[SYS_BEEP]        = sys_beep;
@@ -44,7 +45,7 @@ void init_syscalls_table()
 
 SyscallResult syscalls_handler(Registers* regs)
 {
-    SyscallResult result = {0xFFFFFFFF, 0};
+    SyscallResult result = {0xFFFFFFFF, NULL, 0};
 
     if (syscall_table[regs->eax] == NULL)
         return result;
@@ -67,12 +68,21 @@ SyscallResult syscalls_handler(Registers* regs)
     return result;
 }
 
-void sys_heap_dump(Registers* regs) {
-    return;
+Block* sys_heap_dump(Registers* regs) {
+    return heap_dump();
 }
 
 uint32_t sys_heap_alloc(Registers* regs) {
-    return regs->ebx;
+    Block* ptr = kmalloc(regs->ebx);
+
+    if(!ptr) return 0;
+
+    Block* new_block = (Block*)((uintptr_t)ptr - sizeof(Block));
+
+    global_id++;
+    new_block->id = global_id;  
+
+    return new_block->id;
 }
 
 void sys_heap_free(Registers* regs) {

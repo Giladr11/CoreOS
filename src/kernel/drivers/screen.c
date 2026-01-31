@@ -203,7 +203,6 @@ void printf(const char* fmt, ...)
 {
     const char *ptr = fmt;
     int *arg_ptr = (int*)(&fmt + 1);
-    static int cursor_position = 0;
 
     while (*ptr) 
     {

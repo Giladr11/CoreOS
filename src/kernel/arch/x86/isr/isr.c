@@ -30,7 +30,7 @@ uint32_t __attribute__((cdecl)) ISR_Handler(Registers* regs)
          if (response.status == 1)
          {
             Modify_VGA_Attr(0x02); // green color
-
+            
             printf("\nsyscall %d was succesfully executed!", regs->eax);
 
             if (response.value != 0xFFFFFFFF){

@@ -1,6 +1,8 @@
 #ifndef CLI_H
 #define CLI_H
 
+#include "include/heap/heap.h"
+
 #define INPUT_BUFFER_SIZE 256
 
 #define COMMANDS_TABLE_SIZE 7
@@ -19,7 +21,7 @@ extern char input_buffer[INPUT_BUFFER_SIZE];
 extern int input_index;
 
 // SYSCALLS
-void __attribute__((cdecl)) heap_dump_syscall();
+Block* __attribute__((cdecl)) heap_dump_syscall();
 uint32_t __attribute__((cdecl)) heap_alloc_syscall(uint32_t size);
 void __attribute__((cdecl)) heap_free_syscall(uint32_t id);
 void __attribute__((cdecl)) beep_syscall();

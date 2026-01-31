@@ -3,6 +3,10 @@
 
 #include "include/stdint.h"
 
+extern int cursor_position;
+extern int input_start;  
+extern int prefix_line;
+
 void Enable_Prefix_Line();
 
 void Disable_Prefix_Line();
