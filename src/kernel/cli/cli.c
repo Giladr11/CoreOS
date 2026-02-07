@@ -102,10 +102,12 @@ void* hex_to_pointer(const char* hex_str) {
 void handle_display_heap()
 {
     Enter_In_Cli();
-    Modify_VGA_Attr(0x06); // brown color
-
 
     Block* current =  heap_dump_syscall();
+
+    Modify_VGA_Attr(0x06); // brown color
+
+    printf("\n");
 
     while (current != NULL)
     {
@@ -142,16 +144,18 @@ void handle_allocation()
 
     size = atoi(input_buffer);
 
+    Modify_VGA_Attr(0x06); // brown color
+
     uint32_t id = heap_alloc_syscall(size);
 
     if (id)
     {   
         Modify_VGA_Attr(0x02);
-        printf("\nSuccessfully Allocated %d Bytes into block Id: %d\n", size, id);
+        printf("\n\nSuccessfully Allocated %d Bytes into block Id: %d\n", size, id);
     }
     else {
         Modify_VGA_Attr(0x04);
-        printf("\nMemory Allocation Has Failed!\n");
+        printf("\n\nMemory Allocation Has Failed!\n");
     }
 
     Disable_Enter_In_Cli();
@@ -174,13 +178,22 @@ void handle_dealocation_input()
 // Handle Deallocation
 void handle_dealocation()
 {
-    // Instead -> check the memory block id received as input
-    void* ptr = (void*)hex_to_pointer(input_buffer);
+    Modify_VGA_Attr(0x06); // brown color
 
-    if (ptr) {
-        //free(ptr);
+    uint32_t id = atoi(input_buffer);
+
+    if (id) {
+        uint32_t response = heap_free_syscall(id);
+
+        if (response) {
+            printf("\n\nSuccesfully freed heap block with id: %d\n", id);
+        }
+        else {
+            Modify_VGA_Attr(0x04); // red color
+            printf("\n\nFailed to free heap block with id: %d\n", id);
+        }
     } 
-
+    
     Disable_Enter_In_Cli();
 }
 

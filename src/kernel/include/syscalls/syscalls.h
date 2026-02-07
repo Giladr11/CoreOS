@@ -11,9 +11,9 @@
 #define SYS_PLAY_MELODY 0x05 
 
 // Syscalls Functions
-Block* sys_heap_dump(Registers* regs);
+void* sys_heap_dump(Registers* regs);
 uint32_t sys_heap_alloc(Registers* regs);
-void sys_heap_free(Registers* regs);
+uint32_t sys_heap_free(Registers* regs);
 
 // Some fun syscalls
 void sys_beep(Registers* regs);
@@ -22,7 +22,7 @@ void sys_play_melody(Registers* regs);
 typedef struct {
     uint32_t value;     // actual return value
     void*    list;      // heap_dump blocks list
-    uint8_t  status;    // 0 = fail, 1 = ok
+    uint32_t  status;    // 0 = fail, 1 = ok
 } SyscallResult;
 
 typedef void (*syscall_t)();

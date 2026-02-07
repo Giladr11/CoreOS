@@ -15,7 +15,7 @@ void heap_init()
     blocks_list->free = 1;                                  // Marks the entire Heap as free
 }
 
-void* heap_dump()
+Block* heap_dump()
 {
     // enable only for admin
     //Block *current = blocks_list;
@@ -35,7 +35,9 @@ void* heap_dump()
     //     current = current->next;
     // }
 
-    return blocks_list;
+    Block *copied_list = blocks_list;
+
+    return copied_list;
 }
 
 // Function to split a block into two smaller blocks according the the requested size
@@ -60,8 +62,6 @@ void *kmalloc(uint32_t size)
 {
     DisableInterrupts();
 
-    Modify_VGA_Attr(0x06); // brown color
-
     if (size == 0)
     {
         EnableInterrupts();
@@ -72,7 +72,7 @@ void *kmalloc(uint32_t size)
     while (current != NULL) 
     {   
         // for admin privileges
-        printf("\nBlock id: %d at Address %p with the size of %d Bytes\n", current->id, current, current->size);
+        printf("\n\nBlock id: %d at Address %p with the size of %d Bytes\n", current->id, current, current->size);
 
         if (current->free == 1 && current->size >= size + sizeof(Block))
         {
@@ -90,6 +90,7 @@ void *kmalloc(uint32_t size)
         current = current->next; 
     }
 
+    // for admin privileges
     printf("\nNo suitable Block found\n");
 
     EnableInterrupts();
@@ -116,19 +117,22 @@ void coalesce_free_blocks()
 }
 
 // Function to Deallocate Memory
-void kfree(void *ptr)
+uint32_t kfree(void* ptr) // make the whole thing handle id
 {
-    DisableInterrupts();
 
-    Modify_VGA_Attr(0x06); // brown color
+    ptr = ptr + sizeof(Block); // get the address without the metadata
+    
+    DisableInterrupts();
 
     if (ptr == NULL)
     {   
+        // admin privileges
         printf("\nAttempted to free a NULL pointer.\n");
         EnableInterrupts();
-        return;
+        return 0;
     }
 
+    // admin privileges
     // Debugging the input pointer
     printf("\nFreeing pointer: %p\n", ptr);
 
@@ -139,7 +143,7 @@ void kfree(void *ptr)
     int block_found = 0;
     while (current != NULL)
     {
-        if (current == block)
+        if (current->id == block->id)
         {
             block_found = 1;
             break;
@@ -149,10 +153,11 @@ void kfree(void *ptr)
 
     if (!block_found)
     {
+        // admin privileges
         Modify_VGA_Attr(0x04); // Set error attribute (red color)
         printf("\nError: Pointer %p is not a valid allocated block.\n", ptr);
         EnableInterrupts();
-        return;
+        return 0;
     }
 
     printf("\nFreeing Block at %p with Size %d\n", block, block->size);
@@ -171,7 +176,6 @@ void kfree(void *ptr)
 
     Modify_VGA_Attr(0x02); // Set success attribute (green color)
     printf("\nSuccessfully Freed %p\n", ptr);
+    return 1;
     EnableInterrupts();
 }
-
-

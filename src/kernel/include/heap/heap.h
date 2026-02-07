@@ -18,8 +18,8 @@ extern uint32_t heap_end;       // The end of the Heap
 extern Block *blocks_list;      // The Head of the Blocks list
 
 void heap_init();
-void* heap_dump();
+Block* heap_dump();
 void *kmalloc(uint32_t size);
-void kfree(void *ptr);
+uint32_t kfree(void *ptr);
 
 #endif

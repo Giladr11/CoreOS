@@ -37,7 +37,7 @@ void init_syscalls_table()
 {
     syscall_table[SYS_HEAP_DUMP]   = (void*)sys_heap_dump;
     syscall_table[SYS_HEAP_ALLOC]  = (syscall_t)sys_heap_alloc;
-    syscall_table[SYS_HEAP_FREE]   = sys_heap_free;
+    syscall_table[SYS_HEAP_FREE]   = (syscall_t)sys_heap_free;
     syscall_table[SYS_BEEP]        = sys_beep;
     syscall_table[SYS_PLAY_MELODY] = sys_play_melody;
     //...
@@ -55,8 +55,15 @@ SyscallResult syscalls_handler(Registers* regs)
         case SYS_HEAP_ALLOC:
             result.value = ((uint32_t(*)(Registers*))syscall_table[regs->eax])(regs);
             result.status = 1;
-
             break;
+
+        case SYS_HEAP_FREE: 
+            result.status = ((uint32_t(*)(Registers*))syscall_table[regs->eax])(regs);
+            break;
+
+        case SYS_HEAP_DUMP:
+            result.list = ((void*(*)(Registers*))syscall_table[regs->eax])(regs);
+            result.status = 1;
 
         default:
             ((void(*)(Registers*))syscall_table[regs->eax])(regs);
@@ -68,7 +75,7 @@ SyscallResult syscalls_handler(Registers* regs)
     return result;
 }
 
-Block* sys_heap_dump(Registers* regs) {
+void* sys_heap_dump(Registers* regs) {
     return heap_dump();
 }
 
@@ -85,8 +92,22 @@ uint32_t sys_heap_alloc(Registers* regs) {
     return new_block->id;
 }
 
-void sys_heap_free(Registers* regs) {
-    return;
+uint32_t sys_heap_free(Registers* regs) {
+    Block* current = blocks_list;
+    uint8_t response = 0;
+    
+    while (current != NULL) 
+    {
+        if(current->id == regs->ebx)
+        {
+            response = kfree(current);
+            break;
+        }
+
+        current = current->next;
+    }
+
+    return response;
 }
 
 void wait_ms(uint32_t ms) {

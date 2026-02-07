@@ -29,20 +29,27 @@ uint32_t __attribute__((cdecl)) ISR_Handler(Registers* regs)
 
          if (response.status == 1)
          {
+            // admin
             Modify_VGA_Attr(0x02); // green color
             
             printf("\nsyscall %d was succesfully executed!", regs->eax);
 
-            if (response.value != 0xFFFFFFFF){
+            if (response.value != 0xFFFFFFFF) {
                  return response.value;
             }
+
+            if (response.list != NULL) {
+                return (uint32_t)response.list;
+            }
+
          }
          else {
             Modify_VGA_Attr(0x04); // red color
 
             printf("\nError: syscall %d has failed!", regs->eax);
          }
-         return 0;
+
+         return response.status;
          Modify_VGA_Attr(0x0F); // white color
     }
 
